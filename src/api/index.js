@@ -7,29 +7,29 @@ import {getMockSellers} from '../mocks/mock-sellers';
 var request = require('request');
 
 export default ({ config, db }) => {
-	let api = Router();
+    let api = Router();
 
-	let projects = [];
+    let projects = [];
     const mockSellers = getMockSellers();
 
     // create project
     api.post('/project/', (req, res) => {
-		// get seller by id
-		const seller = mockSellers.find(seller => {
-			return req.body.sellerId === seller.id;
-		});
-		if (seller) {
+        // get seller by id
+        const seller = mockSellers.find(seller => {
+            return req.body.sellerId === seller.id;
+        });
+        if (seller) {
             // add the project to the seller's projects
-			const project = new Project(req.body.name, req.body.desc, req.body.maxBudget, req.body.deadline, req.body.sellerId, req.body.id);
-			seller.addProject(project);
-			// add the project to the list of projects
+            const project = new Project(req.body.name, req.body.desc, req.body.maxBudget, req.body.deadline, req.body.sellerId, req.body.id);
+            seller.addProject(project);
+            // add the project to the list of projects
             projects.push(project);
             res.json({status: 'success', projectId: projects[projects.length - 1].id});
         } else {
             res.json({status: 'failed', message: 'seller does not exist'});
-		}
+        }
 
-	});
+    });
 
-	return api;
+    return api;
 }
