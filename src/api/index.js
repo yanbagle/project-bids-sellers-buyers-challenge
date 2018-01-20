@@ -1,25 +1,34 @@
 import { version } from '../../package.json';
 import { Router } from 'express';
+import {Project} from '../models/Project';
+import {Seller} from '../models/Seller';
+import {getMockSellers} from '../mocks/mock-sellers';
+
 var request = require('request');
 
 export default ({ config, db }) => {
 	let api = Router();
 
-	var url1 = 'http://us.api.iheart.com/api/v1/catalog/searchAll?keywords=';
-	var url2 = `&queryTrack=false&queryBundle=false&queryArtist=true&queryStation=false&queryFeaturedStation=false&queryTalkShow=false&queryTalkTheme=false&queryKeyword=false&countryCode=US`;
+	let projects = [];
+    const mockSellers = getMockSellers();
 
-	api.get('/search', (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-        var keyword = req.param('keyword');
-        var url = url1 + keyword + url2;
-        request(url, function (error, response, body) {
-            if (response) {
-                res.send(body);
-            } else {
-                console.log('error:', error);
-                res.send(error);
-            }
-        });
+    // create project
+    api.post('/project/', (req, res) => {
+		// get seller by id
+		const seller = mockSellers.find(seller => {
+			return req.body.sellerId === seller.id;
+		});
+		if (seller) {
+            // add the project to the seller's projects
+			const project = new Project(req.body.name, req.body.desc, req.body.maxBudget, req.body.deadline, req.body.sellerId, req.body.id);
+			seller.addProject(project);
+			// add the project to the list of projects
+            projects.push(project);
+            res.json({status: 'success', projectId: projects[projects.length - 1].id});
+        } else {
+            res.json({status: 'failed', message: 'seller does not exist'});
+		}
+
 	});
 
 	return api;
