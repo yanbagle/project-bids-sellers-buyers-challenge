@@ -8,20 +8,21 @@ exports.Project = function (name, desc, maxBudget, deadline, sellerId, id) {
     this.id = id;
     this.sellerId = sellerId;
     this.bids = [];
-    this.lowestBid = 0;
+    this.lowestBid = {};
     this.open = true;
     this.winningBidder = null;
 }
 
 exports.Project.prototype.getLowestBid = function () {
-    this.lowestBid = this.bids.reduce((a, b) => {
-        if (a.amount < b.amount) {
-            return a;
-        } else {
-            return b;
-        }
-    });
-
+    if (this.bids.length > 0) {
+        this.lowestBid = this.bids.reduce((a, b) => {
+            if (a.amount < b.amount) {
+                return a;
+            } else {
+                return b;
+            }
+        });
+    }
     return this.lowestBid;
 }
 
