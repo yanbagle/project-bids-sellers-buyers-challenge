@@ -13,13 +13,5 @@ exports.Seller.prototype.addProject = function (project) {
     this.projects.push(project);
 }
 
-exports.Seller.prototype.getProjects = function () {
-
-}
-
-exports.Seller.prototype.getSeller = function (id) {
-
-}
-
 
 
